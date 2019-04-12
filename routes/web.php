@@ -27,5 +27,4 @@ Route::get('/weixin/accesstoken','weixin\WxController@getAccessToken');
 Route::get('/weixin/atoken','weixin\WxController@getaToken');
 //微信菜单创建
 Route::get('/weixin/createmenu','weixin\WxController@createMenu');
-Route::get('/weixin/atoken','weixin\WxController@getaToken');
 Route::get('/weixin/test','weixin\WxController@test');
