@@ -20,7 +20,7 @@ class WxController extends Controller
         $str=$time.$content."\n";
         file_put_contents("logs/wxlog.log",$str,FILE_APPEND);
         $data=simplexml_load_string($content);
-        //var_dump($data);
+        var_dump($data);
 //         echo 'ToUserName: '. $data->ToUserName;echo '</br>';        // 公众号ID
 //         echo 'FromUserName: '. $data->FromUserName;echo '</br>';    // 用户OpenID
 //         echo 'CreateTime: '. $data->CreateTime;echo '</br>';        // 时间戳
