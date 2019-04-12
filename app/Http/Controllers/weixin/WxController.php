@@ -118,10 +118,8 @@ class WxController extends Controller
         print_r($arr);
         //判断错误信息
         if($arr['errcode']>0){
-            //TODO 错误处理
             echo "创建菜单失败";
         }else{
-            // TODO 正常逻辑
             echo "创建菜单成功";
         }
     }
