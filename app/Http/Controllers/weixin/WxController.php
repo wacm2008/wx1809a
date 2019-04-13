@@ -37,7 +37,7 @@ class WxController extends Controller
             $local_user = WxuserModel::where(['openid'=>$openid])->first();
             if($local_user){
                 //用户之前关注过
-                echo '<xml><ToUserName><![CDATA['.$openid.']]></ToUserName><FromUserName><![CDATA['.$wx_id.']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['. '欢迎回来 '. $local_user['nickname'] .']]></Content></xml>';
+                echo '<xml><ToUserName><![CDATA['.$openid.']]></ToUserName><FromUserName><![CDATA['.$wx_id.']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['. 'gracias por haberte vuelto '. $local_user['nickname'] .']]></Content></xml>';
             }else{
                 //用户首次关注
                 //获取用户信息
@@ -50,7 +50,7 @@ class WxController extends Controller
                     'headimgurl'  => $arr['headimgurl'],
                 ];
                 $id = WxuserModel::insertGetId($user_info);
-                echo '<xml><ToUserName><![CDATA['.$openid.']]></ToUserName><FromUserName><![CDATA['.$wx_id.']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['. '欢迎关注 '. $arr['nickname'] .']]></Content></xml>';
+                echo '<xml><ToUserName><![CDATA['.$openid.']]></ToUserName><FromUserName><![CDATA['.$wx_id.']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['. 'gracias por seguirme '. $arr['nickname'] .']]></Content></xml>';
             }
         }
     }
