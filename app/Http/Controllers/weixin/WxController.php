@@ -39,8 +39,7 @@ class WxController extends Controller
                 //用户之前关注过
                 echo '<xml><ToUserName><![CDATA['.$openid.']]></ToUserName><FromUserName><![CDATA['.$wx_id.']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['. 'gracias por haberte vuelto '. $local_user['nickname'] .']]></Content></xml>';
             }else{
-                //用户首次关注
-                //获取用户信息
+                //用户首次关注 获取用户信息
                 $arr = $this->getUserInfo($openid);
                 //用户信息入库
                 $user_info = [
@@ -86,9 +85,9 @@ class WxController extends Controller
     }
     //微信菜单创建
     public function createMenu(){
-        $url='https://api.weixin.qq.com/cgi-bin/menu/create?access_token='.$this->getAccessToken();
         //接口数据
-        //注意菜单层级关系
+        $url='https://api.weixin.qq.com/cgi-bin/menu/create?access_token='.$this->getAccessToken();
+        //菜单层级
         $post_arr = [
             'button'    => [
                 [
