@@ -73,7 +73,7 @@ class WxController extends Controller
                                       <FromUserName><![CDATA['.$wx_id.']]></FromUserName>
                                       <CreateTime>'.time().'</CreateTime>
                                       <MsgType><![CDATA[text]]></MsgType>
-                                      <Content><![CDATA[感谢发送]]></Content>
+                                      <Content><![CDATA[gracias por su mensaje]]></Content>
                                    </xml>';
             echo $response_xml;
         }else if($msg_type=='voice'){
@@ -101,7 +101,7 @@ class WxController extends Controller
                                       <FromUserName><![CDATA['.$wx_id.']]></FromUserName>
                                       <CreateTime>'.time().'</CreateTime>
                                       <MsgType><![CDATA[text]]></MsgType>
-                                      <Content><![CDATA[感谢发送]]></Content>
+                                      <Content><![CDATA[gracias por su mensaje]]></Content>
                                    </xml>';
             echo $response_xml;
         }else if($msg_type=='text'){
@@ -253,8 +253,29 @@ class WxController extends Controller
         return $arr;
     }
     //微信群发
-    public function sendQun(){
+    public function sendQun($openid_arr,$content){
+        $msg=[
+            'touser'=>$openid_arr,
+            'msgtype'=>'text',
+            'text'=>[
+                'content'=>$content,
+            ]
+        ];
         $url='https://api.weixin.qq.com/cgi-bin/message/mass/send?access_token='.$this->getAccessToken();
-
+        $data = json_encode($msg,JSON_UNESCAPED_UNICODE);
+        $clinet = new Client();
+        $response = $clinet->request('POST',$url,[
+            'body'  => $data
+        ]);
+        return $response->getBody();
+    }
+    public function send(){
+        $user_list=WxuserModel::where(['sub_status'=>1])->get()->toArray();
+        //print_r($user_list);
+        $openid_arr=array_column($user_list,'openid');
+        //print_r($openid_arr);
+        $msg='hoy';
+        $res=$this->sendQun($openid_arr,$msg);
+        echo $res;
     }
 }

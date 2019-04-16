@@ -28,3 +28,5 @@ Route::get('/weixin/atoken','weixin\WxController@getaToken');
 //微信菜单创建
 Route::get('/weixin/createmenu','weixin\WxController@createMenu');
 Route::get('/weixin/test','weixin\WxController@test');
+//微信群发
+Route::get('/weixin/send','weixin\WxController@send');
