@@ -51,6 +51,7 @@ class WxController extends Controller
             $urli='https://api.weixin.qq.com/cgi-bin/media/get?access_token='.$this->getAccessToken().'&media_id='.$media_id;
             $response=$clinet->get(new Uri($urli));
             $headers=$response->getHeaders();//获取响应头信息
+            //var_dump($headers);
             $file_info=$headers['Content-disposition'][0];//获取文件名
             $file_name=rtrim(substr($file_info,-20),'""');
             $new_file_name='weixin/foto/'.substr(md5(time().mt_rand()),10,8).'_'.$file_name;
