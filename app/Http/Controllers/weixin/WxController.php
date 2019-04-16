@@ -6,8 +6,12 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Redis;
 use App\Model\User\WxuserModel;
+use App\Model\User\WxvoiceModel;
+use App\Model\User\WxfotoModel;
 use DB;
 use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Uri;
+use Illuminate\Support\Facades\Storage;
 class WxController extends Controller
 {
     public function valid(){
@@ -30,7 +34,55 @@ class WxController extends Controller
         $wx_id = $data->ToUserName;// 公众号ID
         $openid = $data->FromUserName;//用户OpenID
         $event = $data->Event;//事件类型
-
+        //使用guzzle
+        $clinet = new Client();
+        //图片素材处理
+        $msg_type=$data->MsgType;
+        if($msg_type=='image'){
+            //$url=$data->PicUrl;
+            //$response=$clinet->get(new Uri($url));
+            //$img=file_get_contents($data->PicUrl);
+            //$file_name=time().mt_rand(11111,99999).'.jpg';
+            //$foto=file_put_contents("wx/images/".$file_name,$img);//下载到本地
+            //MediaId url
+            //获取扩展文件
+            $media_id=$data->MediaId;
+            $urli='https://api.weixin.qq.com/cgi-bin/media/get?access_token='.$this->getAccessToken().'&media_id='.$media_id;
+            $response=$clinet->get(new Uri($urli));
+            $headers=$response->getHeaders();
+            $file_info=$headers['Content-disposition'][0];
+            $file_name=rtrim(substr($file_info,-20),'""');
+            $new_file_name='weixin/foto/'.substr(md5(time().mt_rand()),10,8).'_'.$file_name;
+            //echo $new_file_name;
+            //保存文件
+            $foto=Storage::put($new_file_name,$response->getBody());
+            //var_dump($foto);
+            //获取用户信息
+            $arr = $this->getUserInfo($openid);
+            $foto_info=[
+                'openid'    => $arr['openid'],
+                'foto_address'  => 'weixin/foto/'.substr(md5(time().mt_rand()),10,8).'_'.$file_name,
+            ];
+            $res = WxfotoModel::insertGetId($foto_info);
+        }else if($msg_type=='voice'){
+            //语音处理
+            $media_id=$data->MediaId;
+            $url='https://api.weixin.qq.com/cgi-bin/media/get?access_token='.$this->getAccessToken().'&media_id='.$media_id;
+            //echo $url;
+            $response=$clinet->get(new Uri($url));
+            //$amr=file_get_contents($url);
+            $file_name = 'weixin/voice/'.time().mt_rand(11111,99999).'.mp3';
+            //$voice = file_put_contents('weixin/voice/'.$file_name,$amr);
+            $voice=Storage::put($file_name,$response->getBody());
+            //var_dump($voice);
+            //获取用户信息
+            $arr = $this->getUserInfo($openid);
+            $voice_info=[
+                'openid'    => $arr['openid'],
+                'voice_address'  => 'weixin/voice/'.$file_name,
+            ];
+            $res = WxvoiceModel::insertGetId($voice_info);
+        }
         //扫码关注事件
         if($event=='subscribe'){
             //根据openid判断用户是否已存在
