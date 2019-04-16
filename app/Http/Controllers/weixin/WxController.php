@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Redis;
 use App\Model\User\WxuserModel;
 use App\Model\User\WxvoiceModel;
 use App\Model\User\WxfotoModel;
+use App\Model\User\WxtextModel;
 use DB;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Uri;
@@ -63,7 +64,7 @@ class WxController extends Controller
             $foto_info=[
                 'openid'    => $arr['openid'],
                 'f_time' => time(),
-                'foto_address'  => 'weixin/foto/'.substr(md5(time().mt_rand()),10,8).'_'.$file_name,
+                'foto_address'  => $new_file_name,
             ];
             $res = WxfotoModel::insertGetId($foto_info);
         }else if($msg_type=='voice'){
@@ -82,7 +83,7 @@ class WxController extends Controller
             //语音入库
             $voice_info=[
                 'openid'    => $arr['openid'],
-                'voice_address'  => 'weixin/voice/'.$file_name,
+                'voice_address'  => $file_name,
                 'v_time' => time(),
             ];
             $res = WxvoiceModel::insertGetId($voice_info);
@@ -120,6 +121,15 @@ class WxController extends Controller
                 }
                 echo $response_xml;
             }
+            //获取用户信息
+            $arr = $this->getUserInfo($openid);
+            //语音入库
+            $text_info=[
+                'openid'    => $arr['openid'],
+                'wx_text'  => $data->Content,'+天气',
+                't_time' => time(),
+            ];
+            $res = WxtextModel::insertGetId($text_info);
         }
         //扫码关注事件
         if($event=='subscribe'){
@@ -224,4 +234,6 @@ class WxController extends Controller
         $arr=json_decode($data,true);
         return $arr;
     }
+    //微信群发
+
 }
