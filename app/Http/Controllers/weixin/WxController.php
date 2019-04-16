@@ -68,6 +68,14 @@ class WxController extends Controller
                 'foto_address'  => $new_file_name,
             ];
             $res = WxfotoModel::insertGetId($foto_info);
+            $response_xml='<xml>
+                                      <ToUserName><![CDATA['.$openid.']]></ToUserName>
+                                      <FromUserName><![CDATA['.$wx_id.']]></FromUserName>
+                                      <CreateTime>'.time().'</CreateTime>
+                                      <MsgType><![CDATA[text]]></MsgType>
+                                      <Content><![CDATA[感谢发送]]></Content>
+                                   </xml>';
+            echo $response_xml;
         }else if($msg_type=='voice'){
             //语音处理
             $media_id=$data->MediaId;
@@ -88,6 +96,14 @@ class WxController extends Controller
                 'v_time' => time(),
             ];
             $res = WxvoiceModel::insertGetId($voice_info);
+            $response_xml='<xml>
+                                      <ToUserName><![CDATA['.$openid.']]></ToUserName>
+                                      <FromUserName><![CDATA['.$wx_id.']]></FromUserName>
+                                      <CreateTime>'.time().'</CreateTime>
+                                      <MsgType><![CDATA[text]]></MsgType>
+                                      <Content><![CDATA[感谢发送]]></Content>
+                                   </xml>';
+            echo $response_xml;
         }else if($msg_type=='text'){
             //获取用户信息
             $arr = $this->getUserInfo($openid);
