@@ -94,21 +94,30 @@ class WxController extends Controller
                 $url='https://free-api.heweather.net/s6/weather/now?key=HE1904161239551731&location='.$city;
                 $arr=json_decode(file_get_contents($url),true);
                 //print_r($arr);
-                $fl=$arr['HeWeather6'][0]['now']['tmp'];//摄氏度
-                $wind_dir=$arr['HeWeather6'][0]['now']['wind_dir'];//风向
-                $wind_sc=$arr['HeWeather6'][0]['now']['wind_sc'];//风力
-                $hum=$arr['HeWeather6'][0]['now']['hum'];//湿度
-                $str="温度：".$fl."\n"."风向：".$wind_dir."\n"."风力：".$wind_sc."\n"."湿度：".$hum."\n";
-                $response_xml='<xml>
-<ToUserName><![CDATA['.$openid.']]></ToUserName>
-  <FromUserName><![CDATA['.$wx_id.']]></FromUserName>
-  <CreateTime>'.time().'</CreateTime>
-  <MsgType><![CDATA[text]]></MsgType>
-  <Content><![CDATA['.$str.']]></Content>
-</xml>';
-                echo $response_xml;
+                if($arr['HeWeather6'][0]['status']=='ok'){
+                    $fl=$arr['HeWeather6'][0]['now']['tmp'];//摄氏度
+                    $wind_dir=$arr['HeWeather6'][0]['now']['wind_dir'];//风向
+                    $wind_sc=$arr['HeWeather6'][0]['now']['wind_sc'];//风力
+                    $hum=$arr['HeWeather6'][0]['now']['hum'];//湿度
+                    $str="温度：".$fl."\n"."风向：".$wind_dir."\n"."风力：".$wind_sc."\n"."湿度：".$hum."\n";
+                    $response_xml='<xml>
+                                      <ToUserName><![CDATA['.$openid.']]></ToUserName>
+                                      <FromUserName><![CDATA['.$wx_id.']]></FromUserName>
+                                      <CreateTime>'.time().'</CreateTime>
+                                      <MsgType><![CDATA[text]]></MsgType>
+                                      <Content><![CDATA['.$str.']]></Content>
+                                   </xml>';
+                    //echo $response_xml;
+                }else{
+                    $response_xml='<xml>
+                                      <ToUserName><![CDATA['.$openid.']]></ToUserName>
+                                      <FromUserName><![CDATA['.$wx_id.']]></FromUserName>
+                                      <CreateTime>'.time().'</CreateTime>
+                                      <MsgType><![CDATA[text]]></MsgType>
+                                      <Content><![CDATA[城市名不正确]]></Content>
+                                   </xml>';
+                }
             }
-
         }
         //扫码关注事件
         if($event=='subscribe'){
