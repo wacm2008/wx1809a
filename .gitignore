@@ -12,3 +12,4 @@ yarn-error.log
 .idea
 /public/logs
 /public/wx
+/storage/app/weixin

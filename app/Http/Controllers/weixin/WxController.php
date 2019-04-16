@@ -62,6 +62,7 @@ class WxController extends Controller
             //图片入库
             $foto_info=[
                 'openid'    => $arr['openid'],
+                'f_time' => time(),
                 'foto_address'  => 'weixin/foto/'.substr(md5(time().mt_rand()),10,8).'_'.$file_name,
             ];
             $res = WxfotoModel::insertGetId($foto_info);
@@ -82,6 +83,7 @@ class WxController extends Controller
             $voice_info=[
                 'openid'    => $arr['openid'],
                 'voice_address'  => 'weixin/voice/'.$file_name,
+                'v_time' => time(),
             ];
             $res = WxvoiceModel::insertGetId($voice_info);
         }else if($msg_type=='text'){
@@ -107,7 +109,6 @@ class WxController extends Controller
                                       <MsgType><![CDATA[text]]></MsgType>
                                       <Content><![CDATA['.$str.']]></Content>
                                    </xml>';
-                    //echo $response_xml;
                 }else{
                     $response_xml='<xml>
                                       <ToUserName><![CDATA['.$openid.']]></ToUserName>
@@ -117,6 +118,7 @@ class WxController extends Controller
                                       <Content><![CDATA[城市名不正确]]></Content>
                                    </xml>';
                 }
+                echo $response_xml;
             }
         }
         //扫码关注事件
