@@ -49,8 +49,8 @@ class WxController extends Controller
             $media_id=$data->MediaId;
             $urli='https://api.weixin.qq.com/cgi-bin/media/get?access_token='.$this->getAccessToken().'&media_id='.$media_id;
             $response=$clinet->get(new Uri($urli));
-            $headers=$response->getHeaders();
-            $file_info=$headers['Content-disposition'][0];
+            $headers=$response->getHeaders();//获取响应头信息
+            $file_info=$headers['Content-disposition'][0];//获取文件名
             $file_name=rtrim(substr($file_info,-20),'""');
             $new_file_name='weixin/foto/'.substr(md5(time().mt_rand()),10,8).'_'.$file_name;
             //echo $new_file_name;
@@ -59,6 +59,7 @@ class WxController extends Controller
             //var_dump($foto);
             //获取用户信息
             $arr = $this->getUserInfo($openid);
+            //图片入库
             $foto_info=[
                 'openid'    => $arr['openid'],
                 'foto_address'  => 'weixin/foto/'.substr(md5(time().mt_rand()),10,8).'_'.$file_name,
@@ -77,11 +78,37 @@ class WxController extends Controller
             //var_dump($voice);
             //获取用户信息
             $arr = $this->getUserInfo($openid);
+            //语音入库
             $voice_info=[
                 'openid'    => $arr['openid'],
                 'voice_address'  => 'weixin/voice/'.$file_name,
             ];
             $res = WxvoiceModel::insertGetId($voice_info);
+        }else if($msg_type=='text'){
+            //文本处理
+            if(strpos($data->Content,'+天气')){
+                //echo $data->Content;exit;
+                //获取城市名
+                $city=explode('+',$data->Content)[0];
+                //echo $city;
+                $url='https://free-api.heweather.net/s6/weather/now?key=HE1904161239551731&location='.$city;
+                $arr=json_decode(file_get_contents($url),true);
+                //print_r($arr);
+                $fl=$arr['HeWeather6'][0]['now']['tmp'];//摄氏度
+                $wind_dir=$arr['HeWeather6'][0]['now']['wind_dir'];//风向
+                $wind_sc=$arr['HeWeather6'][0]['now']['wind_sc'];//风力
+                $hum=$arr['HeWeather6'][0]['now']['hum'];//湿度
+                $str="温度：".$fl."\n"."风向：".$wind_dir."\n"."风力：".$wind_sc."\n"."湿度：".$hum."\n";
+                $response_xml='<xml>
+<ToUserName><![CDATA['.$openid.']]></ToUserName>
+  <FromUserName><![CDATA['.$wx_id.']]></FromUserName>
+  <CreateTime>'.time().'</CreateTime>
+  <MsgType><![CDATA[text]]></MsgType>
+  <Content><![CDATA['.$str.']]></Content>
+</xml>';
+                echo $response_xml;
+            }
+
         }
         //扫码关注事件
         if($event=='subscribe'){
