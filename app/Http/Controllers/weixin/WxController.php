@@ -88,6 +88,15 @@ class WxController extends Controller
             ];
             $res = WxvoiceModel::insertGetId($voice_info);
         }else if($msg_type=='text'){
+            //获取用户信息
+            $arr = $this->getUserInfo($openid);
+            //语音入库
+            $text_info=[
+                'openid'    => $arr['openid'],
+                'wx_text'  => $data->Content,
+                't_time' => time(),
+            ];
+            $res = WxtextModel::insertGetId($text_info);
             //文本处理
             if(strpos($data->Content,'+天气')){
                 //echo $data->Content;exit;
@@ -110,6 +119,7 @@ class WxController extends Controller
                                       <MsgType><![CDATA[text]]></MsgType>
                                       <Content><![CDATA['.$str.']]></Content>
                                    </xml>';
+                    echo $response_xml;
                 }else{
                     $response_xml='<xml>
                                       <ToUserName><![CDATA['.$openid.']]></ToUserName>
@@ -118,18 +128,9 @@ class WxController extends Controller
                                       <MsgType><![CDATA[text]]></MsgType>
                                       <Content><![CDATA[城市名不正确]]></Content>
                                    </xml>';
+                    echo $response_xml;
                 }
-                echo $response_xml;
             }
-            //获取用户信息
-            $arr = $this->getUserInfo($openid);
-            //语音入库
-            $text_info=[
-                'openid'    => $arr['openid'],
-                'wx_text'  => $data->Content,'+天气',
-                't_time' => time(),
-            ];
-            $res = WxtextModel::insertGetId($text_info);
         }
         //扫码关注事件
         if($event=='subscribe'){
@@ -235,5 +236,8 @@ class WxController extends Controller
         return $arr;
     }
     //微信群发
+    public function sendQun(){
+        $url='https://api.weixin.qq.com/cgi-bin/message/mass/send?access_token='.$this->getAccessToken();
 
+    }
 }
