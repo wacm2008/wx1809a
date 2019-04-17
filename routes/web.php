@@ -30,3 +30,7 @@ Route::get('/weixin/createmenu','weixin\WxController@createMenu');
 Route::get('/weixin/test','weixin\WxController@test');
 //微信群发
 Route::get('/weixin/send','weixin\WxController@send');
+//微信支付
+Route::get('/weixin/paypay','weixin\WxpayController@paypay');
+//微信支付回调地址
+Route::post('/weixin/notify','weixin\WxpayController@notify');
