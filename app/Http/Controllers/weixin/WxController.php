@@ -107,7 +107,7 @@ class WxController extends Controller
         }else if($msg_type=='text'){
             //获取用户信息
             $arr = $this->getUserInfo($openid);
-            //语音入库
+            //文字入库
             $text_info=[
                 'openid'    => $arr['openid'],
                 'wx_text'  => $data->Content,
@@ -274,7 +274,7 @@ class WxController extends Controller
         //print_r($user_list);
         $openid_arr=array_column($user_list,'openid');
         //print_r($openid_arr);
-        $msg='hoy';
+        $msg='jajaja';
         $res=$this->sendQun($openid_arr,$msg);
         echo $res;
     }
