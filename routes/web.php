@@ -34,3 +34,5 @@ Route::get('/weixin/send','weixin\WxController@send');
 Route::get('/weixin/paypay','weixin\WxpayController@paypay');
 //微信支付回调地址
 Route::post('/weixin/notify','weixin\WxpayController@notify');
+//微信jssdk
+Route::get('/jssdk', 'WxjssdkController@jssdk');
